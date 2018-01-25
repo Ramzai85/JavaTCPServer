@@ -7,5 +7,6 @@ public class SomeClass {
 		BeelineConnector connector = new BeelineConnector("8970199170384027759");
 		connector.getLastIMEI();
 		;
+		;
 	}
 }
