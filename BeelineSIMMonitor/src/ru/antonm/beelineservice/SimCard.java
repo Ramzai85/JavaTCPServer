@@ -17,14 +17,19 @@ public class SimCard {
 	private String bindedIMEI;
 	private String status;
 
-	public void setCurrentIMEI() {
+	public String getCurrentIMEI() {
+		return currentIMEI;
+	}
+	public String getStatus() {
+		return status;
+	}
+	
+	public void setStatus() {
 		String requestURL = BeelineCredentials.weburl + this.iccid + "/ctdUsages";
 		try {
 			String authString = BeelineCredentials.login + ":" + BeelineCredentials.password;
-			System.out.println("auth string: " + authString);
 			byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
 			String authStringEnc = new String(authEncBytes);
-			System.out.println("Base64 encoded auth string: " + authStringEnc);
 
 			URL url = new URL(requestURL);
 			URLConnection urlConnection = url.openConnection();
@@ -32,31 +37,63 @@ public class SimCard {
 			InputStream is = urlConnection.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
 
-			
 			int numCharsRead;
 			char[] charArray = new char[1024];
 			StringBuffer sb = new StringBuffer();
-			
+
 			while ((numCharsRead = isr.read(charArray)) > 0) {
 				sb.append(charArray, 0, numCharsRead);
-//				System.out.println(i++);
+
 			}
 			String result = sb.toString();
-
-			JSONObject jsonObj = new JSONObject(result);
-			System.out.println("IMEI is: " + jsonObj.get("imei"));
-			
-			
-			
-			System.out.println("*** BEGIN ***");
 			//System.out.println(result);
-			System.out.println("*** END ***");
+			JSONObject jsonObj = new JSONObject(result);
+			this.status = (String) jsonObj.get("status");
+
+			// System.out.println("IMEI is: " + jsonObj.get("imei"));
+
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		catch (JSONException e){
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} 
+
+	};
+
+	public void setCurrentIMEI() {
+		String requestURL = BeelineCredentials.weburl + this.iccid + "/ctdUsages";
+		try {
+			String authString = BeelineCredentials.login + ":" + BeelineCredentials.password;
+			byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
+			String authStringEnc = new String(authEncBytes);
+
+			URL url = new URL(requestURL);
+			URLConnection urlConnection = url.openConnection();
+			urlConnection.setRequestProperty("Authorization", "Basic " + authStringEnc);
+			InputStream is = urlConnection.getInputStream();
+			InputStreamReader isr = new InputStreamReader(is);
+
+			int numCharsRead;
+			char[] charArray = new char[1024];
+			StringBuffer sb = new StringBuffer();
+
+			while ((numCharsRead = isr.read(charArray)) > 0) {
+				sb.append(charArray, 0, numCharsRead);
+
+			}
+			String result = sb.toString();
+			//System.out.println(result);
+			JSONObject jsonObj = new JSONObject(result);
+			this.currentIMEI = (String) jsonObj.get("imei");
+			// System.out.println("IMEI is: " + jsonObj.get("imei"));
+
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 
