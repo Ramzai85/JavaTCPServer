@@ -58,7 +58,7 @@ public class BeelineConnector {
 			
 			
 			System.out.println("*** BEGIN ***");
-			System.out.println(result);
+			//System.out.println(result);
 			System.out.println("*** END ***");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
